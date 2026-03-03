@@ -22,6 +22,12 @@ const router = express.Router();
  *         name:
  *           type: string
  *           example: "Judit"
+ *         email:
+ *           type: string
+ *           example: "judit@gmail.com"
+ *         password:
+ *           type: string
+ *           example: "password123"
  *         organizacion:
  *           type: string
  *           description: ObjectId de la organización
@@ -31,10 +37,18 @@ const router = express.Router();
  *       required:
  *         - name
  *         - organizacion
+ *         - email
+ *         - password
  *       properties:
  *         name:
  *           type: string
  *           example: "Judit"
+ *         email:
+ *           type: string
+ *           example: "judit@gmail.com"
+ *         password:
+ *           type: string
+ *           example: "password123"
  *         organizacion:
  *           type: string
  *           description: ObjectId de la organización (24 hex)

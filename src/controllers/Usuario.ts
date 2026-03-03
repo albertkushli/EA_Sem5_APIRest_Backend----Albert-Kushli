@@ -3,12 +3,14 @@ import mongoose from 'mongoose';
 import Usuario, { IUsuarioModel } from '../models/Usuario';
 
 const createUsuario = async (req: Request, res: Response, next: NextFunction) => {
-    const { organizacion, name } = req.body;
+    const { organizacion, name, email, password } = req.body;
 
     const usuario: IUsuarioModel = new Usuario({
         _id: new mongoose.Types.ObjectId(),
         organizacion,
-        name
+        name,
+        email,
+        password
     });
 
     try {
