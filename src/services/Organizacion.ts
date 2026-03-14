@@ -21,7 +21,6 @@ const getAllOrganizaciones = async (): Promise<IOrganizacion[]> => {
         .lean(); 
 };
 
-// Quitamos el "export" de aquí
 const getUsuariosDeOrganizacion = async (organizacionId: string) => {
     const organizacion = await Organizacion.findById(organizacionId)
         .populate('usuarios')
