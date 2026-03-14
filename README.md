@@ -1,3 +1,24 @@
+## Documentació i Referències
+
+### Materials Consultats
+* **Documentació oficial de Mongoose:** Per a la definició d'esquemes (Schema.Types.ObjectId), relacions (ref) i operadors d'arrays (`$push`, `$pull`).
+* **Documentació d'Express.js:** Per al disseny dels controladors, rutes i la gestió de respostes HTTP (req, res).
+* **Swagger / OpenAPI Specification:** Per a la sintaxi de les anotacions i la definició de l'esquema de respostes de l'endpoint `GET /organizaciones/:id/usuarios`.
+
+### Ús d'Intel·ligència Artificial Generativa (IA)
+Durant el desenvolupament d'aquesta pràctica, s'ha utilitzat l'assistent **Google Gemini** per donar suport en les següents tasques específiques:
+
+* **Refactorització cap a la Service Layer:** La IA m'ha assistit per detectar i moure lògica de base de dades que inicialment estava als controladors (com els `findByIdAndUpdate`) cap a l'arxiu `services/Usuario.ts`, assegurant el compliment de la restricció arquitectònica de la rúbrica.
+* **Gestió de vectors en MongoDB:** Assessorament per entendre la millor manera d'omplir i buidar l'array `usuarios` de la col·lecció d'Organitzacions mitjançant els operadors `$push` (en crear un usuari) i `$pull` (en eliminar-lo per evitar "IDs fantasma").
+* **Optimització de consultes:** Confirmació de l'ús correcte de l'encadenament dels mètodes `.populate('usuarios')` i `.lean()` dins del servei per retornar objectes JavaScript plans i millorar el rendiment.
+* **Preparació de l'exposició:** Ajuda per estructurar el guió del vídeo demostratiu, focalitzant l'explicació en com es relacionen els models i com evoluciona el vector de dades.
+
+* Enllaç al vídeo: https://drive.google.com/file/d/1jP51B4gim4042foNVOzTyozoiZSAaZyy/view?usp=sharing
+
+
+
+
+
 # Express API — Mongoose + TypeScript In Depth
 
 API REST construida con **Node.js**, **Express**, **TypeScript** y **Mongoose** que gestiona dos entidades principales: `Organizacion` y `Usuario`.
