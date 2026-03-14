@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import mongoose from 'mongoose';
 import OrganizacionService from '../services/Organizacion';
+import Logging from '../library/Logging'; // 👉 1. FALTABA ESTA IMPORTACIÓN
 
 const createOrganizacion = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -20,12 +21,30 @@ const readOrganizacion = async (req: Request, res: Response, next: NextFunction)
     }
 };
 
+// Aquí implantamos el http nuevo 
 const readAll = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const organizaciones = await OrganizacionService.getAllOrganizaciones();
         return res.status(200).json(organizaciones);
     } catch (error) {
+        Logging.error(error); // Ahora Logging sí existe
         return res.status(500).json({ error });
+    }
+};
+
+const getUsuariosByOrganizacion = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const organizacionId = req.params.organizacionId;
+        const usuarios = await OrganizacionService.getUsuariosDeOrganizacion(organizacionId);
+
+        if (!usuarios) {
+            return res.status(404).json({ message: 'Organización no encontrada' });
+        }
+
+        return res.status(200).json({ usuarios });
+    } catch (error) {
+        Logging.error(error); // Ahora Logging sí existe
+        return res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
 
@@ -51,4 +70,5 @@ const deleteOrganizacion = async (req: Request, res: Response, next: NextFunctio
     }
 };
 
-export default { createOrganizacion, readOrganizacion, readAll, updateOrganizacion, deleteOrganizacion };
+// 👉 2. EXPORT CORREGIDO (hemos quitado el readAll duplicado)
+export default { createOrganizacion, readOrganizacion, readAll, updateOrganizacion, deleteOrganizacion, getUsuariosByOrganizacion };

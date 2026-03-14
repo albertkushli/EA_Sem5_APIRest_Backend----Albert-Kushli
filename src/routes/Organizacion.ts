@@ -9,7 +9,6 @@ const router = express.Router();
  * tags:
  *   - name: Organizaciones
  *     description: Endpoints CRUD de organizaciones
- *
  * components:
  *   schemas:
  *     Organizacion:
@@ -24,10 +23,10 @@ const router = express.Router();
  *           example: "EA Company"
  *         usuarios:
  *           type: array
+ *           description: Array de ObjectIds de usuarios o documentos populados
  *           items:
  *             type: string
- *           description: Array de ObjectIds de usuarios
- *           example: ["65f1c2a1b2c3d4e5f6789012"]
+ *             example: "65f1c2a1b2c3d4e5f6789012"
  *     OrganizacionCreateUpdate:
  *       type: object
  *       required:
@@ -54,9 +53,52 @@ const router = express.Router();
  *       201:
  *         description: Creado
  *       422:
- *         description: Validación fallida (Joi)
+ *         description: Validación fallida
+ *   get:
+ *     summary: Lista todas las organizaciones
+ *     tags: [Organizaciones]
+ *     responses:
+ *       200:
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Organizacion'
  */
 router.post('/', ValidateJoi(Schemas.organizacion.create), controller.createOrganizacion);
+router.get('/', controller.readAll);
+
+/**
+ * @openapi
+ * /organizaciones/{organizacionId}/usuarios:
+ *   get:
+ *     summary: Obtiene todos los usuarios pertenecientes a una organización
+ *     tags: [Organizaciones]
+ *     parameters:
+ *       - in: path
+ *         name: organizacionId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ObjectId de la organización
+ *     responses:
+ *       200:
+ *         description: Lista de usuarios obtenida exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 usuarios:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *       404:
+ *         description: Organización no encontrada
+ */
+router.get('/:organizacionId/usuarios', controller.readOrganizacion);
 
 /**
  * @openapi
@@ -80,30 +122,6 @@ router.post('/', ValidateJoi(Schemas.organizacion.create), controller.createOrga
  *               $ref: '#/components/schemas/Organizacion'
  *       404:
  *         description: No encontrado
- */
-router.get('/:organizacionId', controller.readOrganizacion);
-
-/**
- * @openapi
- * /organizaciones:
- *   get:
- *     summary: Lista todas las organizaciones
- *     tags: [Organizaciones]
- *     responses:
- *       200:
- *         description: OK
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Organizacion'
- */
-router.get('/', controller.readAll);
-
-/**
- * @openapi
- * /organizaciones/{organizacionId}:
  *   put:
  *     summary: Actualiza una organización por ID
  *     tags: [Organizaciones]
@@ -123,20 +141,8 @@ router.get('/', controller.readAll);
  *     responses:
  *       200:
  *         description: OK
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Organizacion'
  *       404:
  *         description: No encontrado
- *       422:
- *         description: Validación fallida (Joi)
- */
-router.put('/:organizacionId', ValidateJoi(Schemas.organizacion.update), controller.updateOrganizacion);
-
-/**
- * @openapi
- * /organizaciones/{organizacionId}:
  *   delete:
  *     summary: Elimina una organización por ID
  *     tags: [Organizaciones]
@@ -153,6 +159,8 @@ router.put('/:organizacionId', ValidateJoi(Schemas.organizacion.update), control
  *       404:
  *         description: No encontrado
  */
+router.get('/:organizacionId', controller.readOrganizacion);
+router.put('/:organizacionId', ValidateJoi(Schemas.organizacion.update), controller.updateOrganizacion);
 router.delete('/:organizacionId', controller.deleteOrganizacion);
 
 export default router;

@@ -1,12 +1,19 @@
 import { NextFunction, Request, Response } from 'express';
-import mongoose from 'mongoose';
+import Organizacion from '../models/Organizacion'; 
 import UsuarioService from '../services/Usuario';
 
 const createUsuario = async (req: Request, res: Response, next: NextFunction) => {
-   
-
     try {
-       const savedUsuario = await UsuarioService.createUsuario(req.body);
+        
+        const savedUsuario = await UsuarioService.createUsuario(req.body);
+
+        if (req.body.organizacion) {
+            await Organizacion.findByIdAndUpdate(
+                req.body.organizacion, 
+                { $push: { usuarios: savedUsuario._id } }
+            );
+        }
+
         return res.status(201).json(savedUsuario);
     } catch (error) {
         return res.status(500).json({ error });

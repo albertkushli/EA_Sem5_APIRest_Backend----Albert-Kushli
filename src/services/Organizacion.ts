@@ -10,11 +10,25 @@ const createOrganizacion = async (data: Partial<IOrganizacion>): Promise<IOrgani
 };
 
 const getOrganizacion = async (organizacionId: string): Promise<IOrganizacionModel | null> => {
-    return await Organizacion.findById(organizacionId);
+    return await Organizacion.findById(organizacionId).populate('usuarios');
 };
 
-const getAllOrganizaciones = async (): Promise<IOrganizacionModel[]> => {
-    return await Organizacion.find();
+// Quitamos el "export" de aquí
+const getAllOrganizaciones = async (): Promise<IOrganizacion[]> => {
+    // Usamos populate('usuarios') para que devuelva los datos enteros y .lean() para rendimiento
+    return await Organizacion.find()
+        .populate('usuarios')
+        .lean(); 
+};
+
+// Quitamos el "export" de aquí
+const getUsuariosDeOrganizacion = async (organizacionId: string) => {
+    const organizacion = await Organizacion.findById(organizacionId)
+        .populate('usuarios')
+        .lean();
+    
+    // Si la organización existe, devolvemos solo el array de usuarios. Si no, null.
+    return organizacion ? organizacion.usuarios : null;
 };
 
 const updateOrganizacion = async (organizacionId: string, data: Partial<IOrganizacion>): Promise<IOrganizacionModel | null> => {
@@ -30,4 +44,11 @@ const deleteOrganizacion = async (organizacionId: string): Promise<IOrganizacion
     return await Organizacion.findByIdAndDelete(organizacionId);
 };
 
-export default { createOrganizacion, getOrganizacion, getAllOrganizaciones, updateOrganizacion, deleteOrganizacion };
+export default { 
+    createOrganizacion, 
+    getOrganizacion, 
+    getAllOrganizaciones, 
+    getUsuariosDeOrganizacion, 
+    updateOrganizacion, 
+    deleteOrganizacion 
+};
