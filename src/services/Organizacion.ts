@@ -43,11 +43,29 @@ const deleteOrganizacion = async (organizacionId: string): Promise<IOrganizacion
     return await Organizacion.findByIdAndDelete(organizacionId);
 };
 
+const addUsuarioToOrganizacion = async (organizacionId: string, usuarioId: string): Promise<IOrganizacionModel | null> => {
+    return await Organizacion.findByIdAndUpdate(
+        organizacionId,
+        { $push: { usuarios: new mongoose.Types.ObjectId(usuarioId) } },
+        { new: true }
+    ).populate('usuarios');
+};
+
+const removeUsuarioFromOrganizacion = async (organizacionId: string, usuarioId: string): Promise<IOrganizacionModel | null> => {
+    return await Organizacion.findByIdAndUpdate(
+        organizacionId,
+        { $pull: { usuarios: new mongoose.Types.ObjectId(usuarioId) } },
+        { new: true }
+    ).populate('usuarios');
+};
+
 export default { 
     createOrganizacion, 
     getOrganizacion, 
     getAllOrganizaciones, 
     getUsuariosDeOrganizacion, 
     updateOrganizacion, 
-    deleteOrganizacion 
+    deleteOrganizacion,
+    addUsuarioToOrganizacion,    
+    removeUsuarioFromOrganizacion 
 };

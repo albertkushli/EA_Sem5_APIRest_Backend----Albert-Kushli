@@ -102,6 +102,51 @@ router.get('/:organizacionId/usuarios', controller.readOrganizacion);
 
 /**
  * @openapi
+ * /organizaciones/{organizacionId}/usuarios/{usuarioId}:
+ *   put:
+ *     summary: Añade un usuario a una organización
+ *     tags: [Organizaciones]
+ *     parameters:
+ *       - in: path
+ *         name: organizacionId
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: usuarioId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Usuario añadido correctamente
+ *       404:
+ *         description: No encontrado
+ *   delete:
+ *     summary: Elimina un usuario de una organización
+ *     tags: [Organizaciones]
+ *     parameters:
+ *       - in: path
+ *         name: organizacionId
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: usuarioId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Usuario eliminado correctamente
+ *       404:
+ *         description: No encontrado
+ */
+router.put('/:organizacionId/usuarios/:usuarioId', controller.addUsuarioToOrganizacion);
+router.delete('/:organizacionId/usuarios/:usuarioId', controller.removeUsuarioFromOrganizacion);
+
+/**
+ * @openapi
  * /organizaciones/{organizacionId}:
  *   get:
  *     summary: Obtiene una organización por ID

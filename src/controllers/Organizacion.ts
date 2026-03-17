@@ -70,5 +70,24 @@ const deleteOrganizacion = async (req: Request, res: Response, next: NextFunctio
     }
 };
 
-// 👉 2. EXPORT CORREGIDO (hemos quitado el readAll duplicado)
-export default { createOrganizacion, readOrganizacion, readAll, updateOrganizacion, deleteOrganizacion, getUsuariosByOrganizacion };
+const addUsuarioToOrganizacion = async (req: Request, res: Response, next: NextFunction) => {
+    const { organizacionId, usuarioId } = req.params;
+    try {
+        const org = await OrganizacionService.addUsuarioToOrganizacion(organizacionId, usuarioId);
+        return org ? res.status(200).json(org) : res.status(404).json({ message: 'not found' });
+    } catch (error) {
+        return res.status(500).json({ error });
+    }
+};
+
+const removeUsuarioFromOrganizacion = async (req: Request, res: Response, next: NextFunction) => {
+    const { organizacionId, usuarioId } = req.params;
+    try {
+        const org = await OrganizacionService.removeUsuarioFromOrganizacion(organizacionId, usuarioId);
+        return org ? res.status(200).json(org) : res.status(404).json({ message: 'not found' });
+    } catch (error) {
+        return res.status(500).json({ error });
+    }
+};
+
+export default { createOrganizacion, readOrganizacion, readAll, updateOrganizacion, deleteOrganizacion, getUsuariosByOrganizacion, addUsuarioToOrganizacion, removeUsuarioFromOrganizacion };
