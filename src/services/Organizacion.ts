@@ -1,32 +1,35 @@
 import mongoose from 'mongoose';
 import Organizacion, { IOrganizacionModel, IOrganizacion } from '../models/Organizacion';
+import { logActivity } from './activityService';
 
 const createOrganizacion = async (data: Partial<IOrganizacion>): Promise<IOrganizacionModel> => {
     const organizacion = new Organizacion({
         _id: new mongoose.Types.ObjectId(),
         ...data
     });
-    return await organizacion.save();
+
+    const saved = await organizacion.save();
+
+    await logActivity("create", "organization", saved._id);
+
+    return saved;
 };
 
 const getOrganizacion = async (organizacionId: string): Promise<IOrganizacionModel | null> => {
     return await Organizacion.findById(organizacionId).populate('usuarios');
 };
 
-// Quitamos el "export" de aquí
 const getAllOrganizaciones = async (): Promise<IOrganizacion[]> => {
-    // Usamos populate('usuarios') para que devuelva los datos enteros y .lean() para rendimiento
     return await Organizacion.find()
         .populate('usuarios')
-        .lean(); 
+        .lean();
 };
 
 const getUsuariosDeOrganizacion = async (organizacionId: string) => {
     const organizacion = await Organizacion.findById(organizacionId)
         .populate('usuarios')
         .lean();
-    
-    // Si la organización existe, devolvemos solo el array de usuarios. Si no, null.
+
     return organizacion ? organizacion.usuarios : null;
 };
 
@@ -34,29 +37,47 @@ const updateOrganizacion = async (organizacionId: string, data: Partial<IOrganiz
     const organizacion = await Organizacion.findById(organizacionId);
     if (organizacion) {
         organizacion.set(data);
-        return await organizacion.save();
+        const updated = await organizacion.save();
+
+        await logActivity("update", "organization", organizacionId);
+
+        return updated;
     }
     return null;
 };
 
 const deleteOrganizacion = async (organizacionId: string): Promise<IOrganizacionModel | null> => {
-    return await Organizacion.findByIdAndDelete(organizacionId);
+    const deleted = await Organizacion.findByIdAndDelete(organizacionId);
+
+    if (deleted) {
+        await logActivity("delete", "organization", organizacionId);
+    }
+
+    return deleted;
 };
 
 const addUsuarioToOrganizacion = async (organizacionId: string, usuarioId: string): Promise<IOrganizacionModel | null> => {
-    return await Organizacion.findByIdAndUpdate(
+    const updated = await Organizacion.findByIdAndUpdate(
         organizacionId,
         { $push: { usuarios: new mongoose.Types.ObjectId(usuarioId) } },
         { new: true }
     ).populate('usuarios');
+
+    await logActivity("add-user", "organization", organizacionId);
+
+    return updated;
 };
 
 const removeUsuarioFromOrganizacion = async (organizacionId: string, usuarioId: string): Promise<IOrganizacionModel | null> => {
-    return await Organizacion.findByIdAndUpdate(
+    const updated = await Organizacion.findByIdAndUpdate(
         organizacionId,
         { $pull: { usuarios: new mongoose.Types.ObjectId(usuarioId) } },
         { new: true }
     ).populate('usuarios');
+
+    await logActivity("remove-user", "organization", organizacionId);
+
+    return updated;
 };
 
 export default { 
